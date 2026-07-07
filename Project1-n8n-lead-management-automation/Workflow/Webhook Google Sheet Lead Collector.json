@@ -1,0 +1,412 @@
+{
+  "name": "Google Forms Lead Collector",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "261d83f3-3756-4459-8b8e-cd0dd5528f3f",
+              "name": "Name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "fde89c5f-acf8-4e6b-9eb1-bb3a4dce5c72",
+              "name": "Email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "efbe6520-07ec-4b33-aff1-b6cb493fd7f4",
+              "name": "Phone",
+              "value": "={{ $json.body.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "9622be76-7ab9-4af1-88b8-5e29a5cbb7dc",
+              "name": "Company",
+              "value": "={{ $json.body.company }}",
+              "type": "string"
+            },
+            {
+              "id": "b9d7ce46-b3d3-4034-b7a6-d9abd3aad14e",
+              "name": "Interest",
+              "value": "={{ $json.body.interest }}",
+              "type": "string"
+            },
+            {
+              "id": "27555802-6ab8-4662-89c8-4fdd2dc71ee6",
+              "name": "=Date",
+              "value": "={{$now}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c12a6f88-1d11-4fe3-b956-00d3188a456f",
+      "name": "Format Lead Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1504,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "ca6f1e99-f833-4efc-86d2-020c3d872916",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c885cbf6-eb97-4993-a851-a8fd4a5a04d4",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fbbf8a7f-6aea-4528-8677-66706ffdb721",
+      "name": "Check Email Exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1056,
+        -48
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10QXoMPKP0alp05pc5cvMU89IrPPI7FIAfNm9MF3ZubU",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Project1-Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10QXoMPKP0alp05pc5cvMU89IrPPI7FIAfNm9MF3ZubU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Email": "={{ $json.Email }}",
+            "Phone": "={{ $json.Phone }}",
+            "Company": "={{ $json.Company }}",
+            "Interest": "={{ $json.Interest }}",
+            "Date": "={{ $json.Date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interest",
+              "displayName": "Interest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "55528388-5b5b-45b4-89d8-1a5b8a7cd30f",
+      "name": "Save Lead To Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        -736,
+        176
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEET_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.email}}",
+        "subject": "Thanks for contacting us",
+        "message": "Hi {{$json.name}},\n\nThanks for your interest. Our team will contact you soon.\n\nRegards",
+        "options": {}
+      },
+      "id": "7dcd640c-891e-4be5-9ad1-14e198c67317",
+      "name": "Send Confirmation Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        -80
+      ],
+      "webhookId": "49c836d2-81bd-41a2-bc25-d1d54967d69c"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "624b83b8-7898-4214-8bbd-df3cdc447af3",
+              "name": "Status",
+              "value": "=Duplicate lead already exists: {{$json.email}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -848,
+        -208
+      ],
+      "id": "9fcb1512-b10c-4c68-ac94-cc671c2f7c37",
+      "name": "Duplicate lead Message"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "google-form-lead",
+        "options": {}
+      },
+      "id": "bda1ce9f-6c06-4d6d-80a4-13fcf3be1f08",
+      "name": "Receive Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1744,
+        -48
+      ],
+      "webhookId": "f575b35a-73b5-463d-8416-6f66049ab400"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10QXoMPKP0alp05pc5cvMU89IrPPI7FIAfNm9MF3ZubU",
+          "mode": "list",
+          "cachedResultName": "N8N Projects Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10QXoMPKP0alp05pc5cvMU89IrPPI7FIAfNm9MF3ZubU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Project1-Leads",
+          "cachedResultUrl": "<your sheet>"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json.Email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1312,
+        -192
+      ],
+      "id": "b7c5bcc0-f61a-412a-8321-ebddfdb6e71f",
+      "name": "Validate Email",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "account",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -944,
+        176
+      ],
+      "id": "12d148ef-2157-475d-a108-d69d5faf5b2f",
+      "name": "Duplicate Decision"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Format Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Validate Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Duplicate Decision",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Check Email Exists": {
+      "main": [
+        [
+          {
+            "node": "Duplicate lead Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Duplicate Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Lead To Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Lead Webhook": {
+      "main": [
+        [
+          {
+            "node": "Format Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Email": {
+      "main": [
+        [
+          {
+            "node": "Check Email Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicate Decision": {
+      "main": [
+        [
+          {
+            "node": "Save Lead To Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7ecb34e6-1aae-4fe1-8b4f-8e88b3d139ee",
+  "meta": {
+    "instanceId": "1b91490680d4d4bbf44c64fe04b66c67e2d5aeb4e8628cc9747f94c7b0563e45"
+  },
+  "nodeGroups": [],
+  "id": "BxXKRPy0oWQVksAX",
+  "tags": []
+}
