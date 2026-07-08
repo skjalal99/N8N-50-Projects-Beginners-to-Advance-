@@ -1,0 +1,188 @@
+{
+  "name": "Gmail Auto Reply Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {
+          "maxEmails": 1
+        }
+      },
+      "id": "gmail-trigger-001",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Your Gmail Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.subject}}",
+              "operation": "contains",
+              "value2": "Test"
+            }
+          ]
+        }
+      },
+      "id": "if-node-001",
+      "name": "Check Subject",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "replySubject",
+              "value": "Auto Reply: We received your email",
+              "type": "string"
+            },
+            {
+              "name": "replyMessage",
+              "value": "Thank you for contacting us. We have received your email and our team will review it shortly.",
+              "type": "string"
+            },
+            {
+              "name": "customerEmail",
+              "value": "={{$json.from}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "edit-fields-001",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.customerEmail}}",
+        "subject": "={{$json.replySubject}}",
+        "emailType": "html",
+        "message": "<html><body><h2 style=\"color:#2563eb\">Thank You For Contacting Us</h2><p>Hi,</p><p>We have received your email.</p><p>Our team will review your request shortly.</p><br><p>Regards,<br>Automation Team</p></body></html>"
+      },
+      "id": "gmail-send-001",
+      "name": "Send HTML Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Your Gmail Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Sheet1",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{$now}}",
+            "Customer Email": "={{$json.customerEmail}}",
+            "Subject": "={{$json.subject}}",
+            "Reply Status": "Sent"
+          }
+        }
+      },
+      "id": "google-sheet-001",
+      "name": "Log Email",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1120,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Your Google Sheets Credential"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check Subject",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Subject": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send HTML Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send HTML Reply": {
+      "main": [
+        [
+          {
+            "node": "Log Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "gmail-auto-reply-v1"
+}
