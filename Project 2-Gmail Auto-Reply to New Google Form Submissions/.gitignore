@@ -1,0 +1,47 @@
+# n8n credentials and secrets
+credentials/
+*.credential
+*.credentials
+*.secret
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Private keys and certificates
+*.pem
+*.key
+*.crt
+
+# n8n local data
+.n8n/
+.n8n/*
+
+# Workflow exports with sensitive data
+*credential*.json
+*secret*.json
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# Node modules (if using custom scripts)
+node_modules/
+
+# Build files
+dist/
+build/
