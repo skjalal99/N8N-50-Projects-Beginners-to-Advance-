@@ -1,0 +1,186 @@
+{
+  "name": "Daily Weather Report Automation - OpenWeather",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 7AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "Riyadh"
+            },
+            {
+              "name": "appid",
+              "value": "YOUR_OPENWEATHER_API_KEY"
+            },
+            {
+              "name": "units",
+              "value": "metric"
+            }
+          ]
+        }
+      },
+      "id": "openweather-request",
+      "name": "Get Weather Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "city",
+              "name": "city",
+              "value": "={{$json.name}}",
+              "type": "string"
+            },
+            {
+              "id": "temperature",
+              "name": "temperature",
+              "value": "={{$json.main.temp}}",
+              "type": "number"
+            },
+            {
+              "id": "humidity",
+              "name": "humidity",
+              "value": "={{$json.main.humidity}}",
+              "type": "number"
+            },
+            {
+              "id": "condition",
+              "name": "condition",
+              "value": "={{$json.weather[0].description}}",
+              "type": "string"
+            },
+            {
+              "id": "windspeed",
+              "name": "windspeed",
+              "value": "={{$json.wind.speed}}",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "id": "format-weather",
+      "name": "Format Weather Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      message: `<html>\n<body style=\"font-family: Arial, sans-serif;\">\n\n<h2>☀️ Daily Weather Report</h2>\n\n<p>📍 <b>Location:</b> ${$json.city}</p>\n\n<p>🌡 <b>Temperature:</b><br>\n${$json.temperature}°C</p>\n\n<p>☁️ <b>Condition:</b><br>\n${$json.condition}</p>\n\n<p>💧 <b>Humidity:</b><br>\n${$json.humidity}%</p>\n\n<p>💨 <b>Wind Speed:</b><br>\n${$json.windspeed} m/s</p>\n\n</body>\n</html>`\n    }\n  }\n];"
+      },
+      "id": "html-message",
+      "name": "Create HTML Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        950,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@gmail.com",
+        "subject": "Daily Weather Report ☀️",
+        "emailType": "html",
+        "message": "={{$json.message}}"
+      },
+      "id": "gmail-send",
+      "name": "Send Weather Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1200,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 7AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Weather Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Weather Data": {
+      "main": [
+        [
+          {
+            "node": "Format Weather Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Weather Data": {
+      "main": [
+        [
+          {
+            "node": "Create HTML Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create HTML Email": {
+      "main": [
+        [
+          {
+            "node": "Send Weather Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "tags": [
+    "n8n",
+    "weather",
+    "openweather",
+    "gmail",
+    "automation"
+  ]
+}
