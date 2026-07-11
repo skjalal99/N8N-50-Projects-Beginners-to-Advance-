@@ -290,8 +290,5 @@ License
 
 MIT License
 
-Author
-
-Your Name
 
 
